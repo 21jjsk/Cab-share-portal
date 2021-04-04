@@ -124,10 +124,11 @@ class Car:
                 ['car_no', 'admin_id', 'model', 'car_capacity', 'driver_name', 'driver_phone']))
 
         
-    # def find_cars(self, location, ):
+    # def find_cars(self, location, start_time, end_time):
         # to be completed
-        
 
+    # def find_car_by_no(self,  car_no):
+        # to be completed
 
 
 class Trip:
