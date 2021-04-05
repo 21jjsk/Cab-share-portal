@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
-from service import ToDoService
-from models import Schema
-
+import service
+import models
 import json
 
 app = Flask(__name__)
@@ -19,31 +18,62 @@ def add_headers(response):
 def hello():
     return "Hello World!"
 
-@app.route("/<name>")
-def hello_name(name):
-    return "Hello " + name
+# Work in progress starts here
+# Student
+@app.route("/student", methods=["POST"])
+def create_student():
+    StudentService().create(request.get_json())
+    # return what???
+
+@app.route("/student", methods=["GET"])
+def list_student():
+    return jsonify(StudentService().get_details())
 
 
+# Admin
+@app.route("/admin", methods=["POST"])
+def create_student():
+    AdminService().create(request.get_json())
+    # return what???
 
 
-@app.route("/todo", methods=["GET"])
-def list_todo():
-    return jsonify(ToDoService().list())
+# Car
+@app.route("/car", methods=["POST"])
+def create_student():
+    CarService().create(request.get_json())
+    # return what???
 
 
-@app.route("/todo", methods=["POST"])
-def create_todo():
-    return jsonify(ToDoService().create(request.get_json()))
+# Pickup details
+@app.route("/pickup", methods=["POST"])
+def create_student():
+    Pickup_details_Service().create(request.get_json())
+    # return what???
 
 
-@app.route("/todo/<item_id>", methods=["PUT"])
-def update_item(item_id):
-    return jsonify(ToDoService().update(item_id, request.get_json()))
+# Trip
+@app.route("/trip", methods=["POST"])
+def create_trip():
+    TripService().create(request.get_json())
+    # return what???
 
+# /trip/findtrip?source=Campus&destination=Airport&leave_by_earliest=blah&leave_by_latest=blah
+@app.route("/trip/findtrip", methods=["GET"])
+def find_trip():
+    source = request.args.get('source', type = str)
+    destination = request.args.get('destination', type = str)
+    leave_by_earliest = request.args.get('leave_by_earliest', type = str)
+    leave_by_latest = request.args.get('leave_by_latest', type = str)
+    return jsonify(TripService().search(source, destination, leave_by_earliest, leave_by_latest))
 
-@app.route("/todo/<item_id>", methods=["DELETE"])
-def delete_item(item_id):
-    return jsonify(ToDoService().delete(item_id))
+# @app.route("/trip/<trip_id>", methods=["PUT"])
+# def update_item(trip_id):
+#     return jsonify(TripService().update(trip_id, request.get_json()))
+
+@app.route("/todo/<trip_id>", methods=["DELETE"])
+def delete_item(trip_id):
+    return jsonify(TripService().delete(trip_id))
+# Work in progress ends here
 
 
 if __name__ == "__main__":

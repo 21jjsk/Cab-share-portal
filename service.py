@@ -1,5 +1,4 @@
-from models import Student, Admin, Car, Trip, Pickup_details
-
+import models
 
 class StudentService:
     def __init__(self):
