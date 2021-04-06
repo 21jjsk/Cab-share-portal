@@ -172,7 +172,7 @@ to_char(p.end_time, 'HH24:MI   ') AS end_time,
 c.driver_name, c.driver_phone 
 FROM car c, pick_up_details p 
 WHERE c.car_no = p.car_no 
-AND NOT (to_char(start_time, 'HH24:MI') < '09:00' OR to_char(start_time, 'HH24:MI') > '15:00') 
+AND NOT (to_char(p.start_time, 'HH24:MI') < '09:00' OR to_char(p.start_time, 'HH24:MI') > '15:00') 
 AND location = 'Railway Station';
 
 5) Finding cars by car_no:
