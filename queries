@@ -1,0 +1,185 @@
+Queries for creating tables and inserting data into the tables:
+
+1) Student Table
+
+Creating Table:
+CREATE TABLE student (s_id varchar(15) PRIMARY KEY, name varchar(30), email varchar(50), password varchar(15), gender varchar(6), phone_no varchar(15), room_no varchar(8));
+
+Description:
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ S_ID                                                  NOT NULL VARCHAR2(15)
+ NAME                                                           VARCHAR2(30)
+ EMAIL                                                          VARCHAR2(50)
+ PASSWORD                                                       VARCHAR2(15)
+ GENDER                                                         VARCHAR2(6)
+ PHONE_NO                                                       VARCHAR2(15)
+ ROOM_NO                                                        VARCHAR2(8)
+
+Query to insert values:
+INSERT INTO student VALUES ('2019A7PS0001H', 'ABCD', 'f20190001@hyderabad.bits-pilani.ac.in', '}dAa9Geq5!*:', 'M', '9999900000', 'VM001');
+	
+
+
+2) Admin Table
+
+Creating Table:
+CREATE TABLE admin (admin_id varchar(15) PRIMARY KEY, name varchar(30), email varchar(50), password varchar(15), phone_no varchar(15));
+
+Description:
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ ADMIN_ID                                              NOT NULL VARCHAR2(15)
+ NAME                                                           VARCHAR2(30)
+ EMAIL                                                          VARCHAR2(50)
+ PASSWORD                                                       VARCHAR2(15)
+ PHONE_NO                                                       VARCHAR2(15)
+
+Query to insert values:
+INSERT INTO admin VALUES ('2019A7PS1000H', 'KKKK', 'f20191000@hyderabad.bits-pilani.ac.in', ')M\8CxY^f[p(ar', '8800099000');
+
+
+
+3) Car Table
+
+Creating Table:
+CREATE TABLE car (car_no varchar(12) PRIMARY KEY, admin_id varchar(15), model varchar(10), car_capacity int, driver_name varchar(30), driver_phone varchar(15));
+
+Foreign Keys:
+ALTER TABLE car ADD CONSTRAINT car_admin_FK FOREIGN KEY (admin_id) REFERENCES admin (admin_id);
+
+Description:
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ CAR_NO                                                NOT NULL VARCHAR2(12)
+ ADMIN_ID                                                       VARCHAR2(15)
+ MODEL                                                          VARCHAR2(10)
+ CAR_CAPACITY                                                   NUMBER(38)
+ DRIVER_NAME                                                    VARCHAR2(30)
+ DRIVER_PHONE                                                   VARCHAR2(15)
+
+Query to insert values:
+INSERT INTO car VALUES ('TS01AB0001', '2019A7PS1000H', 'SUV', 6, 'ABBC', '7777788888');
+
+
+
+4) Trip Table
+
+Creating Table:
+CREATE TABLE trip (trip_id int PRIMARY KEY, s_id varchar(15), source varchar(20), destination varchar(20), leave_by_earliest date, leave_by_latest date, car_no varchar(12));
+
+Foreign Keys:
+ALTER TABLE trip ADD CONSTRAINT trip_student_FK FOREIGN KEY (s_id) REFERENCES student (s_id);
+ALTER TABLE trip ADD CONSTRAINT trip_car_FK FOREIGN KEY (car_no) REFERENCES car (car_no);
+
+Description:
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ TRIP_ID                                               NOT NULL NUMBER(38)
+ S_ID                                                           VARCHAR2(15)
+ SOURCE                                                         VARCHAR2(20)
+ DESTINATION                                                    VARCHAR2(20)
+ LEAVE_BY_EARLIEST                                              DATE
+ LEAVE_BY_LATEST                                                DATE
+ CAR_NO                                                         VARCHAR2(12)
+
+Query to insert values:
+INSERT INTO trip VALUES (3001, '2019A7PS0003H', 'Airport', 'Campus', to_date('2021-03-22 02:45', 'YYYY-MM-DD HH24:MI'), to_date('2021-03-22 04:30', 'YYYY-MM-DD HH24:MI'), 'TS01AB0003');
+
+
+
+5) Pick_Up_Details Table
+
+Creating Table:
+CREATE TABLE pick_up_details (car_no varchar(12), location varchar(20), start_time date, end_time date, PRIMARY KEY (car_no, location, start_time));
+
+Foreign Keys:
+ALTER TABLE pick_up_details ADD CONSTRAINT pick_up_details_car_FK FOREIGN KEY (car_no) REFERENCES car (car_no);
+
+Description:
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ CAR_NO                                                NOT NULL VARCHAR2(12)
+ LOCATION                                              NOT NULL VARCHAR2(20)
+ START_TIME                                            NOT NULL DATE
+ END_TIME                                                       DATE
+
+Query to insert values:
+INSERT INTO pick_up_details VALUES ('TS01AB0005', 'Campus', to_date('2000-01-01 10:00', 'YYYY-MM-DD HH24:MI'), to_date('2000-01-01 16:00', 'YYYY-MM-DD HH24:MI'));
+
+
+
+Queries for inserting, searching, updating and deleting a trip:
+
+1) Inserting:
+INSERT INTO trip VALUES (3001, '2019A7PS0003H', 'Airport', 'Campus', to_date('2021-03-22 02:45', 'YYYY-MM-DD HH24:MI'), to_date('2021-03-22 04:30', 'YYYY-MM-DD HH24:MI'), 'TS01AB0003');
+
+2) Updating:
+UPDATE trip 
+SET destination = 'Railway Station', 
+leave_by_earliest = to_date('2021-03-21 17:00', 'YYYY-MM-DD HH24:MI'), 
+leave_by_latest = to_date('2021-03-21 18:30', 'YYYY-MM-DD HH24:MI') 
+WHERE trip_id = 3003;
+
+3) Deleting:
+DELETE FROM trip WHERE trip_id = 3001;
+
+4) Searching:
+SELECT t.trip_id, t.s_id, s.name, s.email, s.phone_no, s.room_no, t.source, t.destination, 
+to_char(t.leave_by_earliest, 'DD-MM-YYYY HH24:MI   ') AS leave_by_earliest, 
+to_char(t.leave_by_latest, 'DD-MM-YYYY HH24:MI   ') AS leave_by_latest, t.car_no
+FROM trip t, student s
+WHERE t.s_id = s.s_id
+AND NOT (leave_by_earliest < to_date('2021-03-19 15:30   ', 'YYYY-MM-DD HH24:MI   ') 
+AND leave_by_latest > to_date('2021-03-19 16:00   ', 'YYYY-MM-DD HH24:MI   ')) 
+AND source = 'Campus' 
+AND destination = 'Railway Station';
+
+
+
+Queries for finding local cabs available in given time range or location or both:
+
+1) No time range or location specified:
+SELECT p.car_no, c.model, c.car_capacity, p.location, 
+to_char(p.start_time, 'HH24:MI     ') AS start_time, 
+to_char(p.end_time, 'HH24:MI   ') AS end_time, 
+c.driver_name, c.driver_phone 
+FROM car c, pick_up_details p 
+WHERE c.car_no = p.car_no;
+
+2) Time range specified:
+SELECT p.car_no, c.model, c.car_capacity, p.location, 
+to_char(p.start_time, 'HH24:MI     ') AS start_time, 
+to_char(p.end_time, 'HH24:MI   ') AS end_time, 
+c.driver_name, c.driver_phone 
+FROM car c, pick_up_details p 
+WHERE c.car_no = p.car_no 
+AND NOT (to_char(start_time, 'HH24:MI') < '09:00' OR to_char(start_time, 'HH24:MI') > '15:00');
+
+3) Location specified:
+SELECT p.car_no, c.model, c.car_capacity, p.location, 
+to_char(p.start_time, 'HH24:MI     ') AS start_time, 
+to_char(p.end_time, 'HH24:MI   ') AS end_time, 
+c.driver_name, c.driver_phone 
+FROM car c, pick_up_details p 
+WHERE c.car_no = p.car_no 
+AND location = 'Campus';
+
+4) Both specified:
+SELECT p.car_no, c.model, c.car_capacity, p.location, 
+to_char(p.start_time, 'HH24:MI     ') AS start_time, 
+to_char(p.end_time, 'HH24:MI   ') AS end_time, 
+c.driver_name, c.driver_phone 
+FROM car c, pick_up_details p 
+WHERE c.car_no = p.car_no 
+AND NOT (to_char(start_time, 'HH24:MI') < '09:00' OR to_char(start_time, 'HH24:MI') > '15:00') 
+AND location = 'Railway Station';
+
+5) Finding cars by car_no:
+SELECT p.car_no, c.model, c.car_capacity, p.location, 
+to_char(p.start_time, 'HH24:MI     ') AS start_time, 
+to_char(p.end_time, 'HH24:MI   ') AS end_time, 
+c.driver_name, c.driver_phone 
+FROM car c, pick_up_details p 
+WHERE c.car_no = p.car_no 
+AND p.car_no = 'TS01AB0001';
