@@ -1,4 +1,4 @@
-import models
+from models import *
 
 class StudentService:
     def __init__(self):
@@ -8,6 +8,7 @@ class StudentService:
         self.model.create(params)
 
     def get_details(self, s_id):
+        print("inside service"+s_id)
         return self.model.get_details(s_id)
 
 
