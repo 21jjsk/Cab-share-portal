@@ -7,9 +7,9 @@ class StudentService:
     def create(self, params):
         self.model.create(params)
 
-    def get_details(self, s_id):
+    def get_details(self, s_id,password):
         print("inside service"+s_id)
-        return self.model.get_details(s_id)
+        return self.model.get_details(s_id,password)
 
 
 class AdminService:

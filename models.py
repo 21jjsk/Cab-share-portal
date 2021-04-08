@@ -128,16 +128,18 @@ class Student:
         """)
 
     # get details of student by passing s_id
-    def get_details(self, s_id):
-        print("inside model"+s_id)
-        cur=self.conn.cursor()
-        temp=cur.execute(f"""
-            SELECT s_id, name, email, gender, phone_no, room_no
-            FROM {self.TABLENAME}
-            WHERE s_id = {s_id};
+    def get_details(self, id, pas):
+        print("inside model" + id)
+        cur = self.conn.cursor()
+        temp = cur.execute(f"""
+            SELECT s_id,password, name, email, gender, phone_no, room_no
+            FROM Student
+            WHERE s_id ="{id}" and password="{pas}";
         """).fetchone()
-        print(temp)
-        return temp
+        # print(temp)
+        dict={"s_id":temp[0],"name":temp[1],"email":temp[2],"gender":temp[3],"phone_no":temp[4],"room_no":temp[5]}
+        print(dict)
+        return dict
 
 
 class Admin:
@@ -243,7 +245,7 @@ class Trip:
 
     # attributes to be changed are passed in attribs
     def update(self, trip_id, attribs):
-        get = lambda key,val: f'to_date("{val}","YYYY-MM-DD  HH24:MI")' if key == "leave_by_earliest" or key == "leave_by_latest" else f'"{val}"'
+        get = lambda key, val: f'to_date("{val}","YYYY-MM-DD  HH24:MI")' if key == "leave_by_earliest" or key == "leave_by_latest" else f'"{val}"'
 
         self.conn.execute(f"""
                 UPDATE {self.TABLENAME} 
