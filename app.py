@@ -101,13 +101,21 @@ def create_trip():
     return "works"
 
 
+@app.route("/trip_history", methods=["POST"])
+def trip_history():
+    data = request.get_json()
+    s_id = data.get('s_id')
+    return json.dumps(TripService().trip_history(s_id))
+
+
 # /trip/findtrip?source=Campus&destination=Airport&leave_by_earliest=blah&leave_by_latest=blah
-@app.route("/trip/findtrip", methods=["GET"])
+@app.route("/findtrip", methods=["POST"])
 def find_trip():
-    source = request.args.get('source', type=str)
-    destination = request.args.get('destination', type=str)
-    leave_by_earliest = request.args.get('leave_by_earliest', type=str)
-    leave_by_latest = request.args.get('leave_by_latest', type=str)
+    data = request.get_json()
+    source = data.get('source')
+    destination = data.get('destination')
+    leave_by_earliest = data.get('leave_by_earliest')
+    leave_by_latest = data.get('leave_by_latest')
     return jsonify(TripService().search(source, destination, leave_by_earliest, leave_by_latest))
 
 

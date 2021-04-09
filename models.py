@@ -39,8 +39,8 @@ class Schema:
                 s_id varchar(15) , 
                 source varchar(20), 
                 destination varchar(20), 
-                leave_by_earliest date, 
-                leave_by_latest date, 
+                leave_by_earliest varchar(20), 
+                leave_by_latest varchar(20), 
                 FOREIGN KEY (s_id)
                  REFERENCES  Student(s_id)
             );
@@ -132,12 +132,13 @@ class Student:
         print("inside model" + id)
         cur = self.conn.cursor()
         temp = cur.execute(f"""
-            SELECT s_id,password, name, email, gender, phone_no, room_no
+            SELECT s_id,name, email, gender, phone_no, room_no
             FROM Student
             WHERE s_id ="{id}" and password="{pas}";
         """).fetchone()
         # print(temp)
-        dict={"s_id":temp[0],"name":temp[1],"email":temp[2],"gender":temp[3],"phone_no":temp[4],"room_no":temp[5]}
+        dict = {"s_id": temp[0], "name": temp[1], "email": temp[2], "gender": temp[3], "phone_no": temp[4],
+                "room_no": temp[5]}
         print(dict)
         return dict
 
@@ -225,22 +226,30 @@ class Trip:
         self.conn.execute(f"""
             INSERT INTO {self.TABLENAME} (s_id, source, destination, leave_by_earliest, leave_by_latest, car_no)
             VALUES ("{params.get('s_id')}", "{params.get('source')}", "{params.get('destination')}", 
-                to_date("{params.get('leave_by_earliest')}", "YYYY-MM-DD HH24:MI"), 
-                to_date("{params.get('leave_by_latest')}", "YYYY-MM-DD HH24:MI"), 
+                "{params.get('leave_by_earliest')}", 
+                "{params.get('leave_by_latest')}", 
                 "{params.get('car_no', 'NULL')}");
         """)  # car_no = NULL if it does not exist
+
+    def trip_history(self, s_id):
+        print("inside models")
+        results = self.conn.execute(
+            f""" SELECT * FROM {self.TABLENAME} WHERE s_id="{s_id}" """
+        ).fetchall()
+        results_dic = []
+        for result in results:
+            results_dic.append(
+                {"trip_id": result[0], "s_id": result[1], "location": result[2], "destination": result[3],
+                 "leave_by_earliest": result[4], "leave_by_latest": result[5]})
+        return results_dic
 
     def search(self, source, destination, leave_by_earliest, leave_by_latest):
         # also needed s_name, email, phone_no, room_no
         return self.conn.execute(f"""
-            SELECT trip_id, s_id, name, source, destination, 
-                to_char(leave_by_earliest, 'DD-MM-YYYY HH24:MI') as leave_by_earliest,
-                to_char(leave_by_latest, 'DD-MM-YYYY HH24:MI') as leave_by_latest,
-                car_no 
+            SELECT *
             FROM {self.TABLENAME}
-            WHERE NOT (leave_by_earliest < to_date("{leave_by_earliest}", "YYYY-MM-DD HH24:MI")
-                AND leave_by_latest > to_date("{leave_by_latest}", "YYYY-MM-DD HH24:MI")) 
-                AND source = {source} AND destination = {destination};
+             WHERE source = '{source}' AND destination ='{destination}' AND  (NOT((leave_by_earliest > '{leave_by_latest}')
+            OR leave_by_latest < '{leave_by_earliest}'));
         """).fetchall()
 
     # attributes to be changed are passed in attribs

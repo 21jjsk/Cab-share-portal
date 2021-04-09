@@ -1,5 +1,6 @@
 from models import *
 
+
 class StudentService:
     def __init__(self):
         self.model = Student()
@@ -7,9 +8,9 @@ class StudentService:
     def create(self, params):
         self.model.create(params)
 
-    def get_details(self, s_id,password):
-        print("inside service"+s_id)
-        return self.model.get_details(s_id,password)
+    def get_details(self, s_id, password):
+        print("inside service" + s_id)
+        return self.model.get_details(s_id, password)
 
 
 class AdminService:
@@ -46,7 +47,11 @@ class TripService:
 
     def search(self, source, destination, leave_by_earliest, leave_by_latest):
         return self.model.search(source, destination, leave_by_earliest, leave_by_latest)
-    
+
+    def trip_history(self, s_id):
+        print("inside service")
+        return self.model.trip_history(s_id)
+
     # attributes to be changed are passed in attribs
     def update(self, trip_id, attribs):
         self.model.update(trip_id, attribs)
