@@ -17,14 +17,14 @@ class Schema:
                 phone_no varchar(15), 
                 room_no varchar(8)
             );
-                CREATE TABLE IF NOT EXISTS "Admin" (
+            CREATE TABLE IF NOT EXISTS "Admin" (
                 admin_id varchar(15) PRIMARY KEY, 
                 name varchar(30), 
                 email varchar(50), 
                 password varchar(15), 
                 phone_no varchar(15)
             );
-              CREATE TABLE IF NOT EXISTS "Car" (
+            CREATE TABLE IF NOT EXISTS "Car" (
                 car_no varchar(12) PRIMARY KEY, 
                 admin_id varchar(15) , 
                 model varchar(10), 
@@ -34,7 +34,7 @@ class Schema:
                 FOREIGN KEY(admin_id) REFERENCES Admin(admin_id)
             );
               
-                    CREATE TABLE IF NOT EXISTS "Trip" (
+            CREATE TABLE IF NOT EXISTS "Trip" (
                 trip_id integer PRIMARY KEY AUTOINCREMENT, 
                 s_id varchar(15) , 
                 source varchar(20), 
@@ -44,15 +44,15 @@ class Schema:
                 FOREIGN KEY (s_id)
                  REFERENCES  Student(s_id)
             );
-              CREATE TABLE IF NOT EXISTS "Pickup_details" (
-            car_no varchar(12), 
-            location varchar(20), 
-            start_time date, 
-            end_time date, 
-            PRIMARY KEY (car_no, location, start_time),
-             FOREIGN KEY (car_no)
-                 REFERENCES Car(car_no)
-        );
+            CREATE TABLE IF NOT EXISTS "Pickup_details" (
+                car_no varchar(12), 
+                location varchar(20), 
+                start_time date, 
+                end_time date, 
+                PRIMARY KEY (car_no, location, start_time),
+                FOREIGN KEY (car_no)
+                    REFERENCES Car(car_no)
+            );
         """
         )
         # # create student table
@@ -179,11 +179,41 @@ class Car:
             VALUES ({', '.join(f'"{params.get(attr)}"' for attr in attributes)});
         """)
 
-    # def find_cars(self, location, start_time, end_time):
-    # to be completed
+    def find_cars(self, location, start_time, end_time):
+        self.conn.execute(f"""
+            SELECT p.car_no, c.model, c.car_capacity, p.location, 
+            to_char(p.start_time, 'HH24:MI') AS start_time, 
+            to_char(p.end_time, 'HH24:MI') AS end_time, 
+            c.driver_name, c.driver_phone 
+            FROM car c, pick_up_details p 
+            WHERE c.car_no = p.car_no 
+            AND NOT (to_char(p.end_time, 'HH24:MI') < to_char({start_time}, 'HH24:MI')
+            OR to_char(p.start_time, 'HH24:MI') > to_char({end_time}, 'HH24:MI')) 
+            AND location = {location};
+        """)
 
-    # def find_car_by_no(self,  car_no):
-    # to be completed
+    def find_cars(self, start_time, end_time):
+        self.conn.execute(f"""
+            SELECT p.car_no, c.model, c.car_capacity, p.location, 
+            to_char(p.start_time, 'HH24:MI') AS start_time, 
+            to_char(p.end_time, 'HH24:MI') AS end_time, 
+            c.driver_name, c.driver_phone 
+            FROM car c, pick_up_details p 
+            WHERE c.car_no = p.car_no 
+            AND NOT (to_char(p.end_time, 'HH24:MI') < to_char({start_time}, 'HH24:MI')
+            OR to_char(p.start_time, 'HH24:MI') > to_char({end_time}, 'HH24:MI'));
+        """)
+
+    def find_cars(self, location):
+        self.conn.execute(f"""
+            SELECT p.car_no, c.model, c.car_capacity, p.location, 
+            to_char(p.start_time, 'HH24:MI') AS start_time, 
+            to_char(p.end_time, 'HH24:MI') AS end_time, 
+            c.driver_name, c.driver_phone 
+            FROM car c, pick_up_details p 
+            WHERE c.car_no = p.car_no 
+            AND location = {location};
+        """)
 
 
 class Pickup_details:

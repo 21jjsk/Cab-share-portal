@@ -28,6 +28,15 @@ class CarService:
 
     def create(self, params):
         self.model.create(params)
+    
+    def find_cars(self, location):
+        self.model.find_cars(location)
+
+    def find_cars(self, start_time, end_time):
+        self.model.find_cars(start_time, end_time)
+
+    def find_cars(self, location, start_time, end_time):
+        self.model.find_cars(location, start_time, end_time)
 
 
 class Pickup_details_Service:
