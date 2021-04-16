@@ -41,6 +41,7 @@ class Schema:
                 destination varchar(20), 
                 leave_by_earliest varchar(20), 
                 leave_by_latest varchar(20), 
+                car_no varchar (20),
                 FOREIGN KEY (s_id)
                  REFERENCES  Student(s_id)
             );
@@ -159,7 +160,18 @@ class Admin:
         self.conn.execute(f"""
             INSERT INTO {self.TABLENAME} ({', '.join(attributes)})
             VALUES ({', '.join(f'"{params.get(attr)}"' for attr in attributes)});
-        """)
+       """)
+
+    def search(self, id, password):
+
+        print(id+" "+password+"service")
+        result  =  self.conn.execute(
+            f"""
+            SELECT admin_id from Admin WHERE admin_id="{id}" and password="{password}" ;
+"""
+        ).fetchone()
+        print(result)
+        return result
 
 
 class Car:
@@ -180,7 +192,7 @@ class Car:
         """)
 
     def find_cars(self, location, start_time, end_time):
-        self.conn.execute(f"""
+        result =self.conn.execute(f"""
             SELECT p.car_no, c.model, c.car_capacity, p.location, 
             to_char(p.start_time, 'HH24:MI') AS start_time, 
             to_char(p.end_time, 'HH24:MI') AS end_time, 
@@ -190,7 +202,11 @@ class Car:
             AND NOT (to_char(p.end_time, 'HH24:MI') < to_char({start_time}, 'HH24:MI')
             OR to_char(p.start_time, 'HH24:MI') > to_char({end_time}, 'HH24:MI')) 
             AND location = {location};
-        """)
+        """).fetchall()
+        dict={};
+        for r in result:
+            dict.ap
+
 
     def find_cars(self, start_time, end_time):
         self.conn.execute(f"""
@@ -227,11 +243,12 @@ class Pickup_details:
         self.conn.close()
 
     def create(self, params):
-        self.conn.execute(f"""
+        print(params.get('car_no')+" "+params.get('location')+" "+params.get('start_time')+" "+params.get('end_time'))
+        return self.conn.execute(f"""
             INSERT INTO {self.TABLENAME} (car_no, location, start_time, end_time)
-            VALUES ("{params.get("car_no")}"", "{params.get("location")}"",
-                to_date("{params.get('start_time')}", "YYYY-MM-DD HH24:MI"),
-                to_date("{params.get('end_time')}", "YYYY-MM-DD HH24:MI"));
+            VALUES ("{params.get("car_no")}", "{params.get("location")}",
+                "{params.get('start_time')}",
+                "{params.get('end_time')}");
         """)
 
     # def create(self, params):
@@ -275,16 +292,25 @@ class Trip:
 
     def search(self, source, destination, leave_by_earliest, leave_by_latest):
         # also needed s_name, email, phone_no, room_no
-        return self.conn.execute(f"""
-            SELECT *
-            FROM {self.TABLENAME}
-             WHERE source = '{source}' AND destination ='{destination}' AND  (NOT((leave_by_earliest > '{leave_by_latest}')
-            OR leave_by_latest < '{leave_by_earliest}'));
+        results = self.conn.execute(f"""
+         SELECT *
+            FROM Trip T, Student S
+             WHERE T.source = '{source}' AND T.destination ='{destination}' AND  (NOT((T.leave_by_earliest > '{leave_by_latest}')
+            OR T.leave_by_latest < '{leave_by_earliest}')) AND T.s_id=S.s_id;
         """).fetchall()
+        print(results)
+        results_dic = []
+        for result in results:
+            results_dic.append(
+                {"trip_id": result[0], "s_id": result[1], "location": result[2], "destination": result[3],
+                 "leave_by_earliest": result[4], "leave_by_latest": result[5], "cab_no": result[6], "name": result[8],
+                 "email": result[9], "gender": result[10], "phone_no": result[11],
+                 "room_no": result[12]})
+        return results_dic
 
     # attributes to be changed are passed in attribs
     def update(self, trip_id, attribs):
-        get = lambda key, val: f'to_date("{val}","YYYY-MM-DD  HH24:MI")' if key == "leave_by_earliest" or key == "leave_by_latest" else f'"{val}"'
+        get = lambda key,val: f'to_date("{val}","YYYY-MM-DD  HH24:MI")' if key == "leave_by_earliest" or key == "leave_by_latest" else f'"{val}"'
 
         self.conn.execute(f"""
                 UPDATE {self.TABLENAME} 

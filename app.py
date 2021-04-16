@@ -64,10 +64,13 @@ def list_student():
 #
 # }
 @app.route("/admin", methods=["POST"])
-def create_admin():
-    AdminService().create(request.get_json())
+def login_admin():
+    data = request.get_json()
+    print(data.get('admin_id')+" "+ data.get('password'))
+    result=AdminService().search(data.get('admin_id'), data.get('password'))
+    print(result)
+    return json.dumps(result)
     # return what???
-    return "posssst"
 
 
 # Car
@@ -87,9 +90,9 @@ def create_car():
     return "car inserted"
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# @app.route("/car/find", methods=["POST"])
-# def find_car():
-#     CarService().create(request.get_json())
+@app.route("/findCar", methods=["POST"])
+def find_car():
+    CarService().create(request.get_json())
 
 
 # Pickup details
