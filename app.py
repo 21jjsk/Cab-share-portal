@@ -16,24 +16,8 @@ def add_headers(response):
     return response
 
 
-@app.route("/")
-def hello():
-    return "Hello World!"
-
-
 # Work in progress starts here
 # Student
-# verified it works
-# {
-#     "s_id": 321,
-#     "name": "jeevan",
-#     "email":"jj@abc.com",
-#     "password":"hahlfhlfl",
-#     "gender":"male",
-#     "phone_no":4313313,
-#     "room_no":"v234"
-#
-# }
 @app.route("/CreateStudent", methods=["POST"])
 def create_student():
     StudentService().create(request.get_json())
@@ -55,19 +39,11 @@ def list_student():
 
 
 # Admin verified
-# to fix admin ID  set to NULL for first person
-# {
-#     "name": "hriday",
-#     "email":"HG@abc.com",
-#     "password":"hhlfl",
-#     "phone_no":77813313
-#
-# }
 @app.route("/admin", methods=["POST"])
 def login_admin():
     data = request.get_json()
-    print(data.get('admin_id')+" "+ data.get('password'))
-    result=AdminService().search(data.get('admin_id'), data.get('password'))
+    print(data.get('admin_id') + " " + data.get('password'))
+    result = AdminService().search(data.get('admin_id'), data.get('password'))
     print(result)
     return json.dumps(result)
     # return what???
@@ -75,25 +51,27 @@ def login_admin():
 
 # Car
 # verified
-# {
-#     "car_no": 34783,
-#     "admin_id": 1,
-#     "model":"hhlfl",
-#     "car_capacity":7,
-#     "driver_name":"ram",
-#     "driver_phone":3737373737
-#
-# }
+
 @app.route("/car", methods=["POST"])
 def create_car():
+    # CarService().create()
     CarService().create(request.get_json())
     return "car inserted"
+
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 @app.route("/findCar", methods=["POST"])
 def find_car():
-    CarService().create(request.get_json())
-
+    data = request.get_json()
+    location = data.get('location')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+    print(location)
+    print(start_time)
+    print(end_time)
+    res=json.dumps(CarService().find_cars(location, start_time, end_time))
+    print(res)
+    return res
 
 # Pickup details
 @app.route("/pickup", methods=["POST"])
@@ -126,15 +104,22 @@ def find_trip():
     leave_by_latest = data.get('leave_by_latest')
     return jsonify(TripService().search(source, destination, leave_by_earliest, leave_by_latest))
 
+@app.route("/status", methods=["POST"])
+def update_status():
+    data=request.get_json()
+    return jsonify(TripService().status(data.get('trip_id')))
 
-@app.route("/trip/<trip_id>", methods=["PUT"])
-def update_item(trip_id):
-    return jsonify(TripService().update(trip_id, request.get_json()))
+@app.route("/update", methods=["POST"])
+def update_item():
+    return jsonify(TripService().update(request.get_json()))
+@app.route("/linkcab", methods=["POST"])
+def linkcab():
+    return jsonify(TripService().linkcar(request.get_json()))
 
-
-@app.route("/todo/<trip_id>", methods=["DELETE"])
-def delete_item(trip_id):
-    return jsonify(TripService().delete(trip_id))
+@app.route("/delete", methods=["POST"])
+def delete_item():
+    data=request.get_json()
+    return jsonify(TripService().delete(data.get('trip_id')))
 
 
 # Work in progress ends here

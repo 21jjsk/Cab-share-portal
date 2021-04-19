@@ -22,7 +22,7 @@ class AdminService:
         self.model.create(params)
 
     def search(self, id, password):
-        print(id+" "+password+"service")
+        print(id + " " + password + "service")
         return self.model.search(id, password)
 
 
@@ -31,13 +31,7 @@ class CarService:
         self.model = Car()
 
     def create(self, params):
-       return self.model.create(params)
-    
-    def find_cars(self, location):
-        return self.model.find_cars(location)
-
-    def find_cars(self, start_time, end_time):
-       return self.model.find_cars(start_time, end_time)
+        return self.model.create(params)
 
     def find_cars(self, location, start_time, end_time):
         return self.model.find_cars(location, start_time, end_time)
@@ -66,8 +60,15 @@ class TripService:
         return self.model.trip_history(s_id)
 
     # attributes to be changed are passed in attribs
-    def update(self, trip_id, attribs):
-        self.model.update(trip_id, attribs)
+    def status(self, trip_id):
+        self.model.status(trip_id)
+
+    def update(self, attribs):
+        self.model.update(attribs.get('trip_id'), attribs.get('s_id'), attribs.get('source'),
+                          attribs.get('destination'), attribs.get('leave_by_earliest'), attribs.get('leave_by_latest'))
+
+    def linkcar(self, attribs):
+        self.model.linkcar(attribs.get('trip_id'),attribs.get('car_no'))
 
     def delete(self, trip_id):
-        self.model.delete(trip_id)
+        return self.model.delete(trip_id)
