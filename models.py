@@ -55,7 +55,7 @@ class Schema:
                 FOREIGN KEY (car_no)
                     REFERENCES Car(car_no)
             );
-        insert into ADMIN values ("1","fun","example@xyz","2","82903819");
+     
         
         """
         )
@@ -92,10 +92,19 @@ class Student:
             WHERE s_id ="{id}" and password="{pas}";
         """).fetchone()
         # print(temp)
-        dict = {"s_id": temp[0], "name": temp[1], "email": temp[2], "gender": temp[3], "phone_no": temp[4],
-                "room_no": temp[5]}
-        print(dict)
-        return dict
+        try:
+
+            dict = {"s_id": temp[0], "name": temp[1], "email": temp[2], "gender": temp[3], "phone_no": temp[4],
+                        "room_no": temp[5]}
+
+            print(dict)
+            return dict
+
+
+        except:
+            return []
+
+
 
 
 class Admin:
@@ -231,16 +240,16 @@ class Trip:
          SELECT *
             FROM Trip T, Student S
              WHERE T.source = '{source}' AND T.destination ='{destination}' AND  (NOT((T.leave_by_earliest > '{leave_by_latest}')
-            OR T.leave_by_latest < '{leave_by_earliest}')) AND T.s_id=S.s_id;
+            OR T.leave_by_latest < '{leave_by_earliest}')) AND T.s_id=S.s_id and T.status='pending';
         """).fetchall()
         print(results)
         results_dic = []
         for result in results:
             results_dic.append(
                 {"trip_id": result[0], "s_id": result[1], "location": result[2], "destination": result[3],
-                 "leave_by_earliest": result[4], "leave_by_latest": result[5], "cab_no": result[6], "name": result[8],
-                 "email": result[9], "gender": result[10], "phone_no": result[11],
-                 "room_no": result[12]})
+                 "leave_by_earliest": result[4], "leave_by_latest": result[5], "cab_no": result[6],"status":result[7], "name": result[9],
+                 "email": result[10], "gender": result[12], "phone_no": result[13],
+                 "room_no": result[14]})
         return results_dic
 
     # attributes to be changed are passed in attribs

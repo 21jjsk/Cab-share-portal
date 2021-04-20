@@ -44,7 +44,7 @@ def login_admin():
     data = request.get_json()
     print(data.get('admin_id') + " " + data.get('password'))
     result = AdminService().search(data.get('admin_id'), data.get('password'))
-    print(result)
+
     return json.dumps(result)
     # return what???
 
@@ -91,7 +91,9 @@ def create_trip():
 def trip_history():
     data = request.get_json()
     s_id = data.get('s_id')
-    return json.dumps(TripService().trip_history(s_id))
+    ress=json.dumps(TripService().trip_history(s_id))
+    print(ress)
+    return ress
 
 
 # /trip/findtrip?source=Campus&destination=Airport&leave_by_earliest=blah&leave_by_latest=blah
