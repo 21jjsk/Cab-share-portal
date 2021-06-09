@@ -9,7 +9,7 @@ Cab Sharing Portal for our Campus
 - Students of my College rely on car pooling in the starting and ending of semesters to make their journey to and from Campus to Airports/Railway station/Bus stations
 - They usually use postings on FB to find people to share cabs with
 - This process is inefficient and disorganised
-- This Application is streamlines the process and aggregates people with their source and dstination and expected timeframe of departure.
+- This application is streamlines the process and aggregates people with their source and destination and expected timeframe of departure.
 
 
 # How it works
@@ -24,5 +24,5 @@ Cab Sharing Portal for our Campus
 - Admin can add cab details like license plate number, make and model, capacity and Driver name and number, as well as where the driver is available to take bookings and at what times. 
 
 # Tech used
-- Flutter for front end, Compatible with web,IOS and Android 
+- Flutter for front end, Compatible with web, IOS and Android 
 - Backend - Flask, Sqlite
