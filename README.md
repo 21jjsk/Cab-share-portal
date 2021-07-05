@@ -26,3 +26,9 @@ Cab Sharing Portal for our Campus
 # Tech used
 - Flutter for front end, Compatible with web, IOS and Android 
 - Backend - Flask, Sqlite
+
+## Team members
+- `Tanya Prasad`
+- `Jeevan Jyot Singh`
+- `Hriday G`
+- `Chandra Vamsi`
