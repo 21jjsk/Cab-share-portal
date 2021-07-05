@@ -1,6 +1,11 @@
 # Cab Share Portal
 Cab Sharing Portal for our Campus
 
+## Team members
+- `Tanya Prasad`
+- `Jeevan Jyot Singh`
+- `Hriday G`
+- `Chandra Vamsi`
 
 # Server for Cab Share Portal Project
 
@@ -27,8 +32,4 @@ Cab Sharing Portal for our Campus
 - Flutter for front end, Compatible with web, IOS and Android 
 - Backend - Flask, Sqlite
 
-## Team members
-- `Tanya Prasad`
-- `Jeevan Jyot Singh`
-- `Hriday G`
-- `Chandra Vamsi`
+
